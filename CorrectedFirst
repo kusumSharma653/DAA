@@ -1,0 +1,85 @@
+import random
+import time
+import matplotlib.pyplot as plt
+
+# Stable Insertion Sort Implementation with comparison counting
+def insertion_sort_with_comparisons(arr, key):
+    comparisons = 0
+    assignments = 0
+    for i in range(1, len(arr)):
+        current = arr[i]
+        j = i - 1
+        # Compare based on the key; ensure stability by not swapping equal elements
+        while j >= 0:
+            comparisons += 1
+            if current[key] < arr[j][key] or (current[key] == arr[j][key] and arr[j]["name"] < current["name"]):
+                arr[j + 1] = arr[j]
+                assignments += 1
+                j -= 1
+            else:
+                break
+        arr[j + 1] = current
+    return comparisons , assignments
+
+# Generate random student data
+def generate_student_data(size):
+    names = [
+        "Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Hannah", "Ivy", "Jack"
+    ]
+    student_data = [
+        {
+            "grade": random.randint(0, 100),  # Random student grade (0 to 100)
+            "name": random.choice(names),     # Random student name
+            "year": random.randint(2000, 2023)  # Random graduation year
+        }
+        for _ in range(size)
+    ]
+    return student_data
+
+# Main function for sorting and plotting
+def main():
+    size = 100  # Dataset size (at least 100 entries)
+    student_data = generate_student_data(size)  # Generate random student records
+
+    # Record comparisons and plot the data
+    comparisons_list = []
+    assignment_list = []
+    
+    # Sort the data and record the number of comparisons at each step
+    for i in range(1, size + 1):
+        current_data = student_data[:i]  # Take first 'i' elements to sort
+        comparisons , assignments = insertion_sort_with_comparisons(current_data, key="grade")
+        comparisons_list.append(comparisons)
+        assignment_list.append(assignments)
+
+    # Downsample the data to make the plot less congested
+    sample_rate = 5  # Take every 5th point for plotting
+    sampled_comparisons = comparisons_list[::sample_rate]
+    sampled_x = range(1, size + 1, sample_rate)
+
+
+        
+    # Plot the graph of comparisons vs. number of elements sorted
+    plt.plot(sampled_x, sampled_comparisons, marker='o', linestyle='-', color='b')
+    plt.title("Number of Comparisons in Insertion Sort (Downsampled)")
+    plt.xlabel("Number of Elements Sorted")
+    plt.ylabel("Number of Comparisons")
+    plt.grid(True)
+    plt.show()
+
+
+    sample_rate = 5  # Take every 5th point for plotting
+    sampled_comparisons = assignment_list[::sample_rate]
+    sampled_x = range(1, size + 1, sample_rate)
+
+    # Plot the graph of comparisons vs. number of elements sorted
+    plt.plot(sampled_x, sampled_comparisons, marker='o', linestyle='-', color='b')
+    plt.title("Number of Assignments in Insertion Sort (Downsampled)")
+    plt.xlabel("Number of Elements Sorted")
+    plt.ylabel("Number of Assignments")
+    plt.grid(True)
+    plt.show()
+    print("Comparisons\n",comparisons_list,"\n")
+    print("Assignments\n",assignment_list)
+# Run the program
+main()
